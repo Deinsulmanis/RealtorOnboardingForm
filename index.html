@@ -400,17 +400,8 @@ select option{background:#071829;color:var(--text)}
   id="nlf"
   name="realtor-onboarding"
   method="POST"
-  netlify
-  netlify-honeypot="bot-field"
-  enctype="multipart/form-data"
   onsubmit="return false"
 >
-  <!-- Required by Netlify for AJAX submissions -->
-  <input type="hidden" name="form-name" value="realtor-onboarding">
-
-  <!-- Netlify honeypot spam trap (hidden from humans) -->
-  <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
-
 <!-- ===== STEPS CONTAINER ===== -->
 <div id="sc">
 
@@ -812,10 +803,9 @@ function sub() {
   const form = document.getElementById('nlf');
   const firstName = (document.getElementById('f-name').value.trim().split(' ')[0]) || 'there';
 
-  fetch('/', {
+  fetch('https://formspree.io/f/xvzyqyjk', {
     method: 'POST',
     // FormData sends multipart/form-data automatically — required for file uploads.
-    // Netlify reads the form-name hidden field to know which form this belongs to.
     body: new FormData(form)
   })
   .then(res => {

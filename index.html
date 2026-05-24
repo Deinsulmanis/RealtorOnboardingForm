@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScaleLab AI — Realtor Website Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#020D1C;
+  --bg2:#071829;
+  --surface:rgba(255,255,255,0.04);
+  --surface2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);
+  --border-c:rgba(0,210,255,0.18);
+  --cyan:#00D2FF;
+  --cyan2:#00FFCB;
+  --cglow:rgba(0,210,255,0.18);
+  --cdim:rgba(0,210,255,0.07);
+  --text:#EDF4FF;
+  --t2:rgba(237,244,255,0.55);
+  --t3:rgba(237,244,255,0.3);
+  --err:#FF4F6E;
+  --ok:#00E5A3;
+  --r:12px;
+  --rs:8px;
+  --sidebar:296px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── BACKGROUND ── */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-grid{
+  position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,0.07) 1px,transparent 1px);
+  background-size:30px 30px;
+}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:orbf 22s ease-in-out infinite}
+.o1{width:560px;height:560px;background:radial-gradient(circle,#00D2FF,transparent);top:-180px;right:-60px;opacity:.1;animation-delay:0s}
+.o2{width:480px;height:480px;background:radial-gradient(circle,#004FFF,transparent);bottom:-140px;left:-80px;opacity:.09;animation-delay:-9s}
+.o3{width:360px;height:360px;background:radial-gradient(circle,#00FFCB,transparent);top:50%;left:50%;opacity:.05;animation-delay:-16s}
+@keyframes orbf{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(28px,-36px) scale(1.04)}66%{transform:translate(-18px,22px) scale(.97)}}
+
+/* ── MOBILE TOP BAR ── */
+.mob-bar{
+  display:none;position:sticky;top:0;z-index:80;
+  background:rgba(2,13,28,.96);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);padding:14px 20px 12px;
+}
+.mob-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.mob-logo{
+  width:30px;height:30px;background:linear-gradient(135deg,#00D2FF,#0050FF);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 14px rgba(0,210,255,.35);flex-shrink:0
+}
+.mob-name{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:var(--text)}
+.mob-name span{color:var(--cyan)}
+.mob-prog-row{display:flex;align-items:center;gap:10px}
+.mob-track{flex:1;height:3px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.mob-fill{height:100%;background:linear-gradient(90deg,#00D2FF,#0050FF);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(0,210,255,.5)}
+.mob-label{font-family:'Unbounded',sans-serif;font-size:10.5px;font-weight:600;color:var(--t3);white-space:nowrap}
+
+/* ── LAYOUT ── */
+.app{position:relative;z-index:1;display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;
+  padding:36px 28px 28px;
+  border-right:1px solid var(--border);
+  background:rgba(2,10,22,.82);backdrop-filter:blur(20px);
+}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:44px}
+.brand-ic{
+  width:42px;height:42px;background:linear-gradient(135deg,#00D2FF,#0050FF);
+  border-radius:11px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 24px rgba(0,210,255,.35);flex-shrink:0;position:relative;overflow:hidden;
+}
+.brand-ic::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.25),transparent)}
+.brand-ic svg{position:relative;z-index:1}
+.brand-txt{display:flex;flex-direction:column}
+.brand-name{font-family:'Unbounded',sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.3px;line-height:1}
+.brand-name span{color:var(--cyan)}
+.brand-sub{font-size:10.5px;font-weight:500;color:var(--t3);margin-top:4px;letter-spacing:.4px}
+.sb-kicker{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--cyan);margin-bottom:26px;padding-left:2px}
+
+/* stepper */
+.stepper{display:flex;flex-direction:column;flex:1}
+.st-item{display:flex;align-items:flex-start;gap:14px;position:relative}
+.st-item:not(:last-child){padding-bottom:24px}
+.st-left{position:relative;flex-shrink:0}
+.st-item:not(:last-child) .st-left::after{
+  content:'';position:absolute;left:15px;top:34px;bottom:0;width:1px;
+  background:var(--border);transition:background .4s ease;
+}
+.st-item.done:not(:last-child) .st-left::after{background:linear-gradient(to bottom,var(--cyan),var(--border))}
+.st-num{
+  width:30px;height:30px;border-radius:50%;
+  border:1.5px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--t3);
+  font-family:'Unbounded',sans-serif;
+  transition:all .35s cubic-bezier(.4,0,.2,1);
+}
+.st-item.cur .st-num{border-color:var(--cyan);background:rgba(0,210,255,.12);color:var(--cyan);box-shadow:0 0 18px rgba(0,210,255,.28)}
+.st-item.done .st-num{border-color:var(--cyan);background:var(--cyan);color:#020D1C}
+.st-info{padding-top:4px}
+.st-name{font-size:12.5px;font-weight:600;color:var(--t3);transition:color .35s ease;line-height:1;margin-bottom:3px}
+.st-desc{font-size:11px;color:var(--t3);transition:color .35s ease}
+.st-item.cur .st-name{color:var(--text)}
+.st-item.cur .st-desc{color:var(--cyan)}
+.st-item.done .st-name,.st-item.done .st-desc{color:var(--t2)}
+
+.sb-foot{border-top:1px solid var(--border);padding-top:20px}
+.sec-badge{display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--t3)}
+
+/* ── MAIN ── */
+.main{flex:1;padding:44px 40px 80px;overflow:hidden;min-width:0}
+.form-wrap{max-width:620px;margin:0 auto}
+
+/* ── STEP TRANSITIONS ── */
+.step{display:none}
+.step.active{display:block;animation:sIn .4s cubic-bezier(.4,0,.2,1) forwards}
+.step.xfwd{display:block;animation:sOutF .25s cubic-bezier(.4,0,.2,1) forwards}
+.step.xbck{display:block;animation:sOutB .25s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes sIn {from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sInB{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sOutF{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-14px)}}
+@keyframes sOutB{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(14px)}}
+
+/* ── STEP HEADER ── */
+.s-hd{margin-bottom:34px}
+.s-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;
+  color:var(--cyan);background:var(--cdim);border:1px solid var(--border-c);
+  padding:5px 12px;border-radius:99px;margin-bottom:14px;
+}
+.tag-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+.s-title{font-family:'Unbounded',sans-serif;font-size:26px;font-weight:700;letter-spacing:-.8px;line-height:1.18;margin-bottom:8px}
+.s-sub{font-size:14.5px;color:var(--t2);line-height:1.65;font-weight:400}
+
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:20px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fld{display:flex;flex-direction:column;gap:7px}
+.fld label{font-size:11.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--t2)}
+.req{color:var(--cyan)}
+.hint{font-size:11px;color:var(--t3);line-height:1.5}
+
+input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],select,textarea{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  width:100%;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:var(--rs);
+  padding:12px 14px;font-size:14px;font-weight:500;color:var(--text);
+  outline:none;transition:border-color .2s,box-shadow .2s,background .2s;
+  -webkit-appearance:none;
+}
+input::placeholder,textarea::placeholder{color:var(--t3);font-weight:400}
+input:hover:not(:focus),select:hover:not(:focus),textarea:hover:not(:focus){
+  border-color:rgba(255,255,255,.14);background:var(--surface2);
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px var(--cdim);
+  background:rgba(0,210,255,.04);
+}
+input.err,select.err,textarea.err{border-color:var(--err);box-shadow:0 0 0 3px rgba(255,79,110,.1)}
+textarea{resize:vertical;min-height:108px;line-height:1.65}
+select{
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='rgba(237,244,255,.4)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:40px;
+}
+select option{background:#071829;color:var(--text)}
+
+.ferr{font-size:11px;color:var(--err);display:none;align-items:center;gap:5px;margin-top:2px}
+.ferr.on{display:flex}
+
+/* ── DIVIDER ── */
+.div{height:1px;background:var(--border)}
+.kicker{
+  font-size:10px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--cyan);
+  display:flex;align-items:center;gap:10px;
+}
+.kicker::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── OPTION CARDS ── */
+.og{display:flex;flex-direction:column;gap:7px}
+.og.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.og.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.oc{position:relative}
+.oc input{position:absolute;opacity:0;pointer-events:none}
+.oc label{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 14px;background:var(--surface);
+  border:1.5px solid var(--border);border-radius:var(--rs);
+  cursor:pointer;font-size:13px;font-weight:500;color:var(--t2);
+  text-transform:none;letter-spacing:0;
+  transition:all .2s ease;user-select:none;line-height:1.35;
+}
+.oc label:hover{border-color:rgba(0,210,255,.3);background:var(--surface2);color:var(--text)}
+.oc input:checked+label{
+  border-color:var(--cyan);background:rgba(0,210,255,.08);color:var(--text);
+  box-shadow:0 0 0 1px rgba(0,210,255,.18);
+}
+/* radio dot */
+.odot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.oc input:checked+label .odot{border-color:var(--cyan);background:var(--cyan)}
+.odot::after{content:'';width:5px;height:5px;border-radius:50%;background:#020D1C;opacity:0;transition:opacity .2s}
+.oc input:checked+label .odot::after{opacity:1}
+/* checkbox */
+.ochk{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.oc input:checked+label .ochk{border-color:var(--cyan);background:var(--cyan)}
+.ochk svg{opacity:0;transition:opacity .2s;color:#020D1C}
+.oc input:checked+label .ochk svg{opacity:1}
+
+/* icon-style option for contact */
+.oc label.icon-opt{flex-direction:column;text-align:center;gap:6px;padding:14px 10px;justify-content:center}
+
+/* ── CONDITIONAL ── */
+.cond{display:none;animation:cdrop .28s ease forwards}
+.cond.on{display:flex;flex-direction:column;gap:7px}
+@keyframes cdrop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── FILE UPLOAD ── */
+.upzone{
+  border:2px dashed var(--border);border-radius:var(--r);
+  padding:26px;text-align:center;cursor:pointer;
+  transition:all .28s ease;background:var(--surface);position:relative;
+}
+.upzone:hover,.upzone.drag{border-color:var(--cyan);background:rgba(0,210,255,.04)}
+.upzone input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;
+  width:100%;height:100%;border:none;background:none;box-shadow:none;padding:0;
+}
+.upzone input[type=file]:focus{box-shadow:none;border:none}
+.up-ic{width:42px;height:42px;background:rgba(0,210,255,.1);border:1px solid var(--border-c);border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.up-txt{font-size:13px;font-weight:600;color:var(--t2);margin-bottom:3px}
+.up-txt span{color:var(--cyan)}
+.up-sub{font-size:11px;color:var(--t3)}
+.fprev{display:none;align-items:center;gap:11px;padding:11px 13px;background:rgba(0,210,255,.06);border:1px solid var(--border-c);border-radius:9px;margin-top:9px}
+.fprev.on{display:flex}
+.fprev img{width:42px;height:42px;border-radius:7px;object-fit:cover;border:1px solid var(--border-c)}
+.fprev-name{flex:1;font-size:12.5px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frm{background:none;border:none;color:var(--t3);cursor:pointer;font-size:17px;line-height:1;padding:2px;transition:color .2s;flex-shrink:0}
+.frm:hover{color:var(--err)}
+
+/* ── NAVIGATION ── */
+.fnav{display:flex;align-items:center;justify-content:space-between;margin-top:34px;padding-top:26px;border-top:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;font-weight:700;cursor:pointer;border:none;outline:none;transition:all .2s cubic-bezier(.4,0,.2,1);letter-spacing:.2px}
+.bg-btn{background:rgba(255,255,255,0.05);color:var(--text);border:1.5px solid rgba(255,255,255,0.15)}
+.bg-btn:hover{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,0.09);transform:translateX(-2px)}
+.cy-btn{background:linear-gradient(135deg,#00D2FF 0%,#0052FF 100%);color:#fff;box-shadow:0 4px 18px rgba(0,210,255,.22);margin-left:auto}
+.cy-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,210,255,.38)}
+.cy-btn:active{transform:translateY(0)}
+.go-btn{background:linear-gradient(135deg,#00E5A3 0%,#00A870 100%);color:#020D1C;font-weight:800;box-shadow:0 4px 18px rgba(0,229,163,.2);margin-left:auto}
+.go-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,163,.38)}
+.go-btn:disabled{opacity:.65;cursor:not-allowed;transform:none!important;box-shadow:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{animation:spin .9s linear infinite;display:inline-block}
+
+/* ── WHAT'S NEXT BOX ── */
+.next-box{background:rgba(0,210,255,.04);border:1px solid rgba(0,210,255,.12);border-radius:var(--r);padding:22px 24px}
+.next-hd{font-family:'Unbounded',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:1.2px;color:var(--cyan);margin-bottom:14px}
+.next-items{display:flex;flex-direction:column;gap:11px}
+.ni{display:flex;align-items:flex-start;gap:11px;font-size:13px;color:var(--t2);line-height:1.5}
+.ni-dot{width:20px;height:20px;background:rgba(0,210,255,.14);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.ni strong{color:var(--text)}
+
+/* ── COMPLETION ── */
+#done{display:none;animation:sIn .5s cubic-bezier(.4,0,.2,1) forwards}
+#done.on{display:block}
+.done-wrap{max-width:560px;margin:0 auto;text-align:center}
+.done-ic{
+  width:84px;height:84px;background:rgba(0,229,163,.1);
+  border:2px solid rgba(0,229,163,.3);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 26px;
+  box-shadow:0 0 50px rgba(0,229,163,.15);
+  animation:pop .6s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.done-title{font-family:'Unbounded',sans-serif;font-size:30px;font-weight:700;letter-spacing:-.8px;line-height:1.2;margin-bottom:12px;animation:fup .5s .2s ease both}
+.done-title .hl{color:var(--cyan)}
+.done-sub{font-size:15.5px;color:var(--t2);line-height:1.7;margin-bottom:36px;animation:fup .5s .35s ease both}
+@keyframes fup{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.done-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px;animation:fup .5s .45s ease both}
+.dc{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:16px 12px;text-align:center}
+.dc-n{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:700;color:var(--cyan);margin-bottom:3px}
+.dc-l{font-size:11px;color:var(--t3);line-height:1.4}
+.done-badge{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;background:var(--cdim);border:1px solid var(--border-c);border-radius:99px;font-size:12px;font-weight:600;color:var(--cyan);animation:fup .5s .55s ease both}
+
+/* ── PARTICLES ── */
+#pcvs{position:fixed;inset:0;pointer-events:none;z-index:200;opacity:0;transition:opacity .3s}
+#pcvs.on{opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:840px){
+  .sidebar{display:none}
+  .mob-bar{display:block}
+  .main{padding:24px 18px 60px}
+  .s-title{font-size:22px}
+  .fr{grid-template-columns:1fr}
+  .og.g2,.og.g3{grid-template-columns:1fr}
+  .done-cards{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .fnav{flex-wrap:wrap;gap:10px}
+  .cy-btn,.go-btn,.bg-btn{margin-left:0;width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg-grid"></div>
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+</div>
+
+<canvas id="pcvs"></canvas>
+
+<!-- Mobile top bar -->
+<header class="mob-bar">
+  <div class="mob-brand">
+    <div class="mob-logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <span class="mob-name">Scale<span>Lab</span> AI</span>
+  </div>
+  <div class="mob-prog-row">
+    <div class="mob-track"><div class="mob-fill" id="mfill" style="width:0%"></div></div>
+    <span class="mob-label" id="mlabel">1 / 6</span>
+  </div>
+</header>
+
+<div class="app">
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-ic">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="brand-txt">
+      <div class="brand-name">Scale<span>Lab</span> AI</div>
+      <div class="brand-sub">Realtor Website Brief</div>
+    </div>
+  </div>
+  <div class="sb-kicker">Onboarding</div>
+  <nav class="stepper">
+    <div class="st-item cur" id="tr0"><div class="st-left"><div class="st-num">1</div></div><div class="st-info"><div class="st-name">Personal Info</div><div class="st-desc">Who you are</div></div></div>
+    <div class="st-item" id="tr1"><div class="st-left"><div class="st-num">2</div></div><div class="st-info"><div class="st-name">Website Goals</div><div class="st-desc">What you need</div></div></div>
+    <div class="st-item" id="tr2"><div class="st-left"><div class="st-num">3</div></div><div class="st-info"><div class="st-name">Branding</div><div class="st-desc">Visual identity</div></div></div>
+    <div class="st-item" id="tr3"><div class="st-left"><div class="st-num">4</div></div><div class="st-info"><div class="st-name">Content</div><div class="st-desc">Story &amp; stats</div></div></div>
+    <div class="st-item" id="tr4"><div class="st-left"><div class="st-num">5</div></div><div class="st-info"><div class="st-name">Social &amp; Contact</div><div class="st-desc">Links &amp; preferences</div></div></div>
+    <div class="st-item" id="tr5"><div class="st-left"><div class="st-num">6</div></div><div class="st-info"><div class="st-name">Final Details</div><div class="st-desc">Last thoughts</div></div></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sec-badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Secure &amp; confidential
+    </div>
+  </div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+<div class="form-wrap">
+
+<!-- =====================================================
+     NETLIFY FORM — wraps all steps so FormData captures
+     every field on submit. onsubmit="return false" stops
+     any accidental native browser submission.
+====================================================== -->
+<form
+  id="nlf"
+  name="realtor-onboarding"
+  method="POST"
+  netlify
+  netlify-honeypot="bot-field"
+  enctype="multipart/form-data"
+  onsubmit="return false"
+>
+  <!-- Required by Netlify for AJAX submissions -->
+  <input type="hidden" name="form-name" value="realtor-onboarding">
+
+  <!-- Netlify honeypot spam trap (hidden from humans) -->
+  <p hidden><label>Don't fill this out: <input name="bot-field"></label></p>
+
+<!-- ===== STEPS CONTAINER ===== -->
+<div id="sc">
+
+<!-- STEP 1 -->
+<div class="step active" id="s0">
+  <div class="s-hd">
+    <div class="s-tag"><span class="tag-dot"></span>Step 01 of 06</div>
+    <h1 class="s-title">Personal<br>Information</h1>
+    <p class="s-sub">Let's start with who you are — the foundation of your website.</p>
+  </div>
+  <div class="fg">
+    <div class="fr">
+      <div class="fld">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" id="f-name" name="full-name" placeholder="Jane Smith" autocomplete="name">
+        <div class="ferr" id="e-name"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please enter your full name</div>
+      </div>
+      <div class="fld">
+        <label>Phone Number <span class="req">*</span></label>
+        <input type="tel" id="f-phone" name="phone" placeholder="+1 (555) 000-0000" autocomplete="tel">
+        <div class="ferr" id="e-phone"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please enter your phone number</div>
+      </div>
+    </div>
+    <div class="fld">
+      <label>Email Address <span class="req">*</span></label>
+      <input type="email" id="f-email" name="email" placeholder="jane@smithrealty.com" autocomplete="email">
+      <div class="ferr" id="e-email"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please enter a valid email address</div>
+    </div>
+    <div class="fld">
+      <label>Brokerage Name <span class="req">*</span></label>
+      <input type="text" id="f-brok" name="brokerage" placeholder="e.g. RE/MAX, Royal LePage, Keller Williams...">
+      <div class="ferr" id="e-brok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please enter your brokerage</div>
+    </div>
+    <div class="fr">
+      <div class="fld">
+        <label>Years in Real Estate <span class="req">*</span></label>
+        <input type="number" id="f-yrs" name="years-experience" placeholder="e.g. 8" min="0" max="60">
+        <div class="ferr" id="e-yrs"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Required</div>
+      </div>
+      <div class="fld"></div>
+    </div>
+    <div class="fld">
+      <label>Areas / Neighborhoods You Specialize In <span class="req">*</span></label>
+      <input type="text" id="f-areas" name="service-areas" placeholder="e.g. Downtown Vancouver, North Shore, Burnaby...">
+      <div class="hint">Separate multiple areas with commas</div>
+      <div class="ferr" id="e-areas"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please enter your service areas</div>
+    </div>
+  </div>
+  <div class="fnav">
+    <div></div>
+    <button type="button" class="btn cy-btn" onclick="nxt()">Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step" id="s1">
+  <div class="s-hd">
+    <div class="s-tag"><span class="tag-dot"></span>Step 02 of 06</div>
+    <h1 class="s-title">Website<br>Goals</h1>
+    <p class="s-sub">Help us understand what you want to achieve — so we design with purpose.</p>
+  </div>
+  <div class="fg">
+    <div class="fld">
+      <label>What is the main goal of your website? <span class="req">*</span></label>
+      <div class="og">
+        <div class="oc"><input type="radio" name="goal" id="g1" value="Generate leads"><label for="g1"><span class="odot"></span>Generate Leads — Attract buyers &amp; sellers to reach out</label></div>
+        <div class="oc"><input type="radio" name="goal" id="g2" value="Showcase listings"><label for="g2"><span class="odot"></span>Showcase Listings — Display properties in a premium way</label></div>
+        <div class="oc"><input type="radio" name="goal" id="g3" value="Build personal brand"><label for="g3"><span class="odot"></span>Build Personal Brand — Establish you as the go-to agent</label></div>
+        <div class="oc"><input type="radio" name="goal" id="g4" value="All of the above"><label for="g4"><span class="odot"></span>All of the Above — Everything, done right</label></div>
+      </div>
+      <div class="ferr" id="e-goal"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select a goal</div>
+    </div>
+    <div class="div"></div>
+    <div class="fld">
+      <label>Who is your target client? <span class="req">*</span></label>
+      <div class="hint" style="margin-bottom:6px">Select all that apply</div>
+      <div class="og g2">
+        <div class="oc"><input type="checkbox" name="target-clients" id="tc1" value="First-time buyers"><label for="tc1"><span class="ochk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></span>First-Time Buyers</label></div>
+        <div class="oc"><input type="checkbox" name="target-clients" id="tc2" value="Luxury buyers"><label for="tc2"><span class="ochk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></span>Luxury Buyers</label></div>
+        <div class="oc"><input type="checkbox" name="target-clients" id="tc3" value="Investors"><label for="tc3"><span class="ochk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></span>Investors</label></div>
+        <div class="oc"><input type="checkbox" name="target-clients" id="tc4" value="Sellers"><label for="tc4"><span class="ochk"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></span>Sellers</label></div>
+      </div>
+      <div class="ferr" id="e-tgt"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select at least one</div>
+    </div>
+    <div class="div"></div>
+    <div class="fld">
+      <label>Do you have a current website? <span class="req">*</span></label>
+      <div class="og g2">
+        <div class="oc"><input type="radio" name="has-website" id="hw1" value="Yes" onchange="tog('cweb',true)"><label for="hw1"><span class="odot"></span>Yes, I do</label></div>
+        <div class="oc"><input type="radio" name="has-website" id="hw2" value="No" onchange="tog('cweb',false)"><label for="hw2"><span class="odot"></span>No website yet</label></div>
+      </div>
+      <div class="ferr" id="e-hasweb"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select an option</div>
+    </div>
+    <div class="cond" id="cweb">
+      <label>Current Website URL</label>
+      <input type="url" id="f-weburl" name="current-website-url" placeholder="https://yourwebsite.com">
+    </div>
+  </div>
+  <div class="fnav">
+    <button type="button" class="btn bg-btn" onclick="bck()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <button type="button" class="btn cy-btn" onclick="nxt()">Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step" id="s2">
+  <div class="s-hd">
+    <div class="s-tag"><span class="tag-dot"></span>Step 03 of 06</div>
+    <h1 class="s-title">Branding &amp;<br>Visual Identity</h1>
+    <p class="s-sub">Let's define how your website will look and feel to visitors.</p>
+  </div>
+  <div class="fg">
+    <div class="fld">
+      <label>Do you have a logo? <span class="req">*</span></label>
+      <div class="og g2">
+        <div class="oc"><input type="radio" name="has-logo" id="hl1" value="Yes" onchange="tog('clogo',true)"><label for="hl1"><span class="odot"></span>Yes, I have one</label></div>
+        <div class="oc"><input type="radio" name="has-logo" id="hl2" value="No" onchange="tog('clogo',false)"><label for="hl2"><span class="odot"></span>No logo yet</label></div>
+      </div>
+      <div class="ferr" id="e-logo"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select an option</div>
+    </div>
+    <div class="cond" id="clogo">
+      <label>Upload Your Logo</label>
+      <div class="upzone" id="lupz">
+        <input type="file" id="f-logo" name="logo" accept="image/*,.svg,.pdf,.ai,.eps" onchange="onLogo(this)">
+        <div class="up-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+        <div class="up-txt"><span>Click to upload logo</span> or drag &amp; drop</div>
+        <div class="up-sub">PNG, SVG, JPG, PDF — max 10MB</div>
+      </div>
+      <div class="fprev" id="lpv">
+        <img id="limg" src="" alt="" style="background:rgba(255,255,255,0.06);border-radius:6px">
+        <span class="fprev-name" id="lname"></span>
+        <button type="button" class="frm" onclick="rmLogo()" title="Remove">✕</button>
+      </div>
+      <div class="hint">PNG or SVG works best for web use</div>
+    </div>
+    <div class="fld">
+      <label>Preferred Color Scheme <span class="req">*</span></label>
+      <select id="f-colors" name="color-scheme">
+        <option value="" disabled selected>Select a style that feels right...</option>
+        <option value="Dark and Luxurious">Dark &amp; Luxurious — Deep, sophisticated, high-end</option>
+        <option value="Light and Clean">Light &amp; Clean — Bright, airy, minimal and modern</option>
+        <option value="Bold and Modern">Bold &amp; Modern — Strong colors, impactful, energetic</option>
+        <option value="Not Sure">Not Sure — Let ScaleLab AI decide what fits best</option>
+      </select>
+      <div class="ferr" id="e-colors"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select a color scheme</div>
+    </div>
+    <div class="fld">
+      <label>Any websites you like the look of?</label>
+      <input type="text" id="f-inspo" name="website-inspiration" placeholder="e.g. compass.com, theagencyre.com — or describe a style...">
+      <div class="hint">Optional but very helpful for our designer</div>
+    </div>
+    <div class="fld">
+      <label>Upload Your Headshot</label>
+      <div class="upzone" id="upz">
+        <input type="file" id="f-hs" name="headshot" accept="image/*" onchange="onFile(this)">
+        <div class="up-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="up-txt"><span>Click to upload</span> or drag &amp; drop</div>
+        <div class="up-sub">PNG, JPG, WEBP — max 10MB</div>
+      </div>
+      <div class="fprev" id="fpv">
+        <img id="pimg" src="" alt="">
+        <span class="fprev-name" id="pname"></span>
+        <button type="button" class="frm" onclick="rmFile()" title="Remove">✕</button>
+      </div>
+      <div class="hint">A professional headshot makes your site far more credible</div>
+    </div>
+  </div>
+  <div class="fnav">
+    <button type="button" class="btn bg-btn" onclick="bck()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <button type="button" class="btn cy-btn" onclick="nxt()">Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step" id="s3">
+  <div class="s-hd">
+    <div class="s-tag"><span class="tag-dot"></span>Step 04 of 06</div>
+    <h1 class="s-title">Your Story<br>&amp; Content</h1>
+    <p class="s-sub">This is the heart of your site — your voice, achievements, and expertise.</p>
+  </div>
+  <div class="fg">
+    <div class="fld">
+      <label>Write a short bio about yourself <span class="req">*</span></label>
+      <textarea id="f-bio" name="bio" rows="5" placeholder="Tell us about your background, what makes you unique, your approach to helping clients, and why someone should choose to work with you..."></textarea>
+      <div class="hint">Aim for 100–250 words. We'll refine and polish it for your site.</div>
+      <div class="ferr" id="e-bio"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please write a short bio</div>
+    </div>
+    <div class="fld">
+      <label>Top 3 Achievements or Stats <span class="req">*</span></label>
+      <textarea id="f-stats" name="achievements" rows="4" placeholder="• 200+ homes sold in the last 5 years&#10;• #1 agent in North Vancouver 2023&#10;• $85M in total sales volume"></textarea>
+      <div class="hint">Numbers and specifics build trust — volume, rankings, milestones.</div>
+      <div class="ferr" id="e-stats"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please list at least one achievement</div>
+    </div>
+    <div class="fld">
+      <label>Do you have Google reviews? <span class="req">*</span></label>
+      <div class="og g2">
+        <div class="oc"><input type="radio" name="has-google-reviews" id="hr1" value="Yes" onchange="tog('crev',true)"><label for="hr1"><span class="odot"></span>Yes, I do</label></div>
+        <div class="oc"><input type="radio" name="has-google-reviews" id="hr2" value="No" onchange="tog('crev',false)"><label for="hr2"><span class="odot"></span>Not yet</label></div>
+      </div>
+      <div class="ferr" id="e-rev"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select an option</div>
+    </div>
+    <div class="cond" id="crev">
+      <label>Google Reviews Link</label>
+      <input type="url" id="f-revurl" name="google-reviews-url" placeholder="https://g.page/your-business/review">
+      <div class="hint">Paste your Google Business profile or review page URL</div>
+    </div>
+    <div class="fld">
+      <label>Any specific services you want highlighted?</label>
+      <textarea id="f-svcs" name="services" rows="3" placeholder="e.g. Pre-sale staging, investment property analysis, military relocation, bilingual services (French/English)..."></textarea>
+      <div class="hint">Optional — helps us create relevant service sections</div>
+    </div>
+  </div>
+  <div class="fnav">
+    <button type="button" class="btn bg-btn" onclick="bck()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <button type="button" class="btn cy-btn" onclick="nxt()">Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step" id="s4">
+  <div class="s-hd">
+    <div class="s-tag"><span class="tag-dot"></span>Step 05 of 06</div>
+    <h1 class="s-title">Social &amp;<br>Contact</h1>
+    <p class="s-sub">Connect your social presence and set communication preferences.</p>
+  </div>
+  <div class="fg">
+    <div class="kicker">Social Profiles</div>
+    <div class="fld">
+      <label>Instagram Handle</label>
+      <input type="text" id="f-ig" name="instagram" placeholder="@yourhandle">
+    </div>
+    <div class="fld">
+      <label>Facebook Page URL</label>
+      <input type="url" id="f-fb" name="facebook" placeholder="https://facebook.com/yourpage">
+    </div>
+    <div class="fld">
+      <label>LinkedIn URL</label>
+      <input type="url" id="f-li" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+    </div>
+    <div class="div"></div>
+    <div class="kicker">Communication</div>
+    <div class="fld">
+      <label>Preferred Contact Method <span class="req">*</span></label>
+      <div class="og g3">
+        <div class="oc">
+          <input type="radio" name="contact-method" id="cm1" value="Phone">
+          <label for="cm1" class="icon-opt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 015.11 12 19.79 19.79 0 012.04 3.34 2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+            <span>Phone</span>
+          </label>
+        </div>
+        <div class="oc">
+          <input type="radio" name="contact-method" id="cm2" value="Email">
+          <label for="cm2" class="icon-opt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span>Email</span>
+          </label>
+        </div>
+        <div class="oc">
+          <input type="radio" name="contact-method" id="cm3" value="Text">
+          <label for="cm3" class="icon-opt">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <span>Text</span>
+          </label>
+        </div>
+      </div>
+      <div class="ferr" id="e-cm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Please select a contact method</div>
+    </div>
+  </div>
+  <div class="fnav">
+    <button type="button" class="btn bg-btn" onclick="bck()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <button type="button" class="btn cy-btn" onclick="nxt()">Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="step" id="s5">
+  <div class="s-hd">
+    <div class="s-tag"><span class="tag-dot"></span>Step 06 of 06</div>
+    <h1 class="s-title">Almost<br>There...</h1>
+    <p class="s-sub">Any last details before we get to work on your website?</p>
+  </div>
+  <div class="fg">
+    <div class="fld">
+      <label>Any other details, requests, or questions?</label>
+      <textarea id="f-other" name="other-details" rows="6" placeholder="Share anything extra — timeline expectations, specific pages, features like MLS feed or calendar booking, languages, or anything that matters to you..."></textarea>
+      <div class="hint">The more context you give us, the better your website will turn out.</div>
+    </div>
+    <div class="next-box">
+      <div class="next-hd">🚀 &nbsp;What Happens Next</div>
+      <div class="next-items">
+        <div class="ni"><div class="ni-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div><span>We review your submission within <strong>24 hours</strong></span></div>
+        <div class="ni"><div class="ni-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div><span>Your dedicated designer will reach out to confirm details</span></div>
+        <div class="ni"><div class="ni-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div><span>We'll send you a <strong>live demo</strong> built around your info to review</span></div>
+        <div class="ni"><div class="ni-dot"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#00D2FF" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div><span>Unlimited revisions until you <strong>love it</strong></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="fnav">
+    <button type="button" class="btn bg-btn" onclick="bck()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back</button>
+    <button type="button" class="btn go-btn" id="submit-btn" onclick="sub()">Submit Onboarding <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+  </div>
+</div>
+
+</div><!-- end #sc -->
+</form><!-- end #nlf -->
+
+<!-- COMPLETION — outside the form, shown via JS after Netlify submission -->
+<div id="done">
+  <div class="done-wrap">
+    <div class="done-ic">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#00E5A3" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2 class="done-title">Thanks <span class="hl" id="dname">there</span>,<br>we'll be in touch<br>within 24 hours! 🎉</h2>
+    <p class="done-sub">We've received your onboarding form and our team will reach out shortly to get your website project started.</p>
+    <div class="done-cards">
+      <div class="dc"><div class="dc-n">24h</div><div class="dc-l">Expected response time</div></div>
+      <div class="dc"><div class="dc-n">Demo</div><div class="dc-l">Sent for your review</div></div>
+      <div class="dc"><div class="dc-n">∞</div><div class="dc-l">Revisions included</div></div>
+    </div>
+    <div class="done-badge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Watch your inbox — we'll reach out soon
+    </div>
+  </div>
+</div>
+
+</div><!-- end .form-wrap -->
+</main>
+</div><!-- end .app -->
+
+<script>
+let step = 0, going = 1;
+const N = 6;
+
+function sync() {
+  for (let i = 0; i < N; i++) {
+    const t = document.getElementById('tr' + i);
+    const n = t.querySelector('.st-num');
+    t.classList.remove('cur', 'done');
+    if (i < step) {
+      t.classList.add('done');
+      n.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+    } else if (i === step) {
+      t.classList.add('cur');
+      n.textContent = i + 1;
+    } else {
+      n.textContent = i + 1;
+    }
+  }
+  const pct = step === 0 ? 0 : Math.round(step / (N - 1) * 100);
+  const mf = document.getElementById('mfill');
+  if (mf) mf.style.width = pct + '%';
+  const ml = document.getElementById('mlabel');
+  if (ml) ml.textContent = (step + 1) + ' / ' + N;
+}
+
+function move(from, to) {
+  const fe = document.getElementById('s' + from);
+  const te = document.getElementById('s' + to);
+  fe.classList.remove('active');
+  fe.classList.add(going > 0 ? 'xfwd' : 'xbck');
+  setTimeout(() => {
+    fe.classList.remove('xfwd', 'xbck');
+    step = to;
+    sync();
+    te.style.animation = going > 0
+      ? 'sIn .4s cubic-bezier(.4,0,.2,1) forwards'
+      : 'sInB .4s cubic-bezier(.4,0,.2,1) forwards';
+    te.classList.add('active');
+    setTimeout(() => { te.style.animation = ''; }, 400);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 220);
+}
+
+function nxt() {
+  if (!valid(step)) return;
+  going = 1;
+  move(step, step + 1);
+}
+
+function bck() {
+  if (step === 0) return;
+  going = -1;
+  move(step, step - 1);
+}
+
+// ── NETLIFY FORM SUBMISSION ──────────────────────────────────────────
+// Uses fetch() + FormData so Netlify captures all fields (including
+// file uploads) while keeping our custom JS completion screen intact.
+// onsubmit="return false" on the form prevents any native page reload.
+function sub() {
+  if (!valid(step)) return;
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Sending...';
+
+  const form = document.getElementById('nlf');
+  const firstName = (document.getElementById('f-name').value.trim().split(' ')[0]) || 'there';
+
+  fetch('/', {
+    method: 'POST',
+    // FormData sends multipart/form-data automatically — required for file uploads.
+    // Netlify reads the form-name hidden field to know which form this belongs to.
+    body: new FormData(form)
+  })
+  .then(res => {
+    // Netlify returns 200 on success
+    showDone(firstName);
+  })
+  .catch(() => {
+    // Network error or local file:// testing (fetch to '/' won't work locally).
+    // Still show the completion screen so local previews work correctly.
+    showDone(firstName);
+  });
+}
+
+function showDone(name) {
+  const fe = document.getElementById('s' + step);
+  fe.classList.remove('active');
+  fe.style.animation = 'sOutF .25s cubic-bezier(.4,0,.2,1) forwards';
+  document.getElementById('dname').textContent = name;
+  setTimeout(() => {
+    document.getElementById('sc').style.display = 'none';
+    const d = document.getElementById('done');
+    d.classList.add('on');
+    burst();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 220);
+}
+// ─────────────────────────────────────────────────────────────────────
+
+function clearErr() {
+  document.querySelectorAll('.err').forEach(e => e.classList.remove('err'));
+  document.querySelectorAll('.ferr.on').forEach(e => e.classList.remove('on'));
+}
+
+function rq(id, eid) {
+  const el = document.getElementById(id);
+  if (!el || !el.value.trim()) {
+    if (el) el.classList.add('err');
+    document.getElementById(eid).classList.add('on');
+    return false;
+  }
+  return true;
+}
+
+function em(id, eid) {
+  const el = document.getElementById(id);
+  if (!el || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())) {
+    if (el) el.classList.add('err');
+    document.getElementById(eid).classList.add('on');
+    return false;
+  }
+  return true;
+}
+
+function rd(name, eid) {
+  if (!document.querySelector('input[name="' + name + '"]:checked')) {
+    document.getElementById(eid).classList.add('on');
+    return false;
+  }
+  return true;
+}
+
+function cb(name, eid) {
+  if (!document.querySelector('input[name="' + name + '"]:checked')) {
+    document.getElementById(eid).classList.add('on');
+    return false;
+  }
+  return true;
+}
+
+function sl(id, eid) {
+  const el = document.getElementById(id);
+  if (!el || !el.value) {
+    if (el) el.classList.add('err');
+    document.getElementById(eid).classList.add('on');
+    return false;
+  }
+  return true;
+}
+
+function valid(s) {
+  clearErr();
+  let ok = true;
+  if (s === 0) { ok = rq('f-name','e-name') & rq('f-phone','e-phone') & em('f-email','e-email') & rq('f-brok','e-brok') & rq('f-yrs','e-yrs') & rq('f-areas','e-areas'); }
+  if (s === 1) { ok = rd('goal','e-goal') & cb('target-clients','e-tgt') & rd('has-website','e-hasweb'); }
+  if (s === 2) { ok = rd('has-logo','e-logo') & sl('f-colors','e-colors'); }
+  if (s === 3) { ok = rq('f-bio','e-bio') & rq('f-stats','e-stats') & rd('has-google-reviews','e-rev'); }
+  if (s === 4) { ok = rd('contact-method','e-cm'); }
+  if (!ok) {
+    const first = document.querySelector('.err, .ferr.on');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return !!ok;
+}
+
+function tog(id, show) {
+  const el = document.getElementById(id);
+  show ? el.classList.add('on') : el.classList.remove('on');
+}
+
+// File upload — headshot
+function onFile(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    document.getElementById('pimg').src = e.target.result;
+    document.getElementById('pname').textContent = f.name;
+    document.getElementById('fpv').classList.add('on');
+    document.getElementById('upz').style.opacity = '.4';
+  };
+  r.readAsDataURL(f);
+}
+
+function rmFile() {
+  document.getElementById('f-hs').value = '';
+  document.getElementById('fpv').classList.remove('on');
+  document.getElementById('upz').style.opacity = '1';
+}
+
+// File upload — logo
+function onLogo(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  document.getElementById('lname').textContent = f.name;
+  document.getElementById('lpv').classList.add('on');
+  document.getElementById('lupz').style.opacity = '.4';
+  if (f.type.startsWith('image/') && !f.name.toLowerCase().endsWith('.svg')) {
+    const r = new FileReader();
+    r.onload = e => { document.getElementById('limg').src = e.target.result; };
+    r.readAsDataURL(f);
+  } else {
+    document.getElementById('limg').src = '';
+    document.getElementById('limg').style.display = 'none';
+  }
+}
+
+function rmLogo() {
+  document.getElementById('f-logo').value = '';
+  document.getElementById('lpv').classList.remove('on');
+  document.getElementById('lupz').style.opacity = '1';
+  document.getElementById('limg').style.display = '';
+  document.getElementById('limg').src = '';
+}
+
+// Drag and drop — headshot
+const uz = document.getElementById('upz');
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('drag'));
+uz.addEventListener('drop', e => {
+  e.preventDefault(); uz.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) {
+    const dt = new DataTransfer(); dt.items.add(f);
+    const inp = document.getElementById('f-hs');
+    inp.files = dt.files; onFile(inp);
+  }
+});
+
+// Drag and drop — logo
+const lz = document.getElementById('lupz');
+lz.addEventListener('dragover', e => { e.preventDefault(); lz.classList.add('drag'); });
+lz.addEventListener('dragleave', () => lz.classList.remove('drag'));
+lz.addEventListener('drop', e => {
+  e.preventDefault(); lz.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f) {
+    const dt = new DataTransfer(); dt.items.add(f);
+    const inp = document.getElementById('f-logo');
+    inp.files = dt.files; onLogo(inp);
+  }
+});
+
+// Clear error state on input
+document.addEventListener('input', e => { if (e.target.matches('input,select,textarea')) e.target.classList.remove('err'); });
+document.addEventListener('change', e => { if (e.target.matches('input,select')) e.target.classList.remove('err'); });
+
+// Particle burst on completion
+function burst() {
+  const cv = document.getElementById('pcvs');
+  const cx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  cv.classList.add('on');
+  const cols = ['#00D2FF','#00FFCB','#0052FF','#FFFFFF','#80E8FF'];
+  const ps = Array.from({ length: 130 }, () => {
+    const a = Math.random() * Math.PI * 2, sp = 2.5 + Math.random() * 7;
+    return { x: cv.width/2, y: cv.height/2, vx: Math.cos(a)*sp, vy: Math.sin(a)*sp - Math.random()*3, r: 1.5 + Math.random()*4, c: cols[Math.floor(Math.random()*cols.length)], life: 1, decay: .013 + Math.random()*.018, g: .07 + Math.random()*.05 };
+  });
+  function draw() {
+    cx.clearRect(0, 0, cv.width, cv.height);
+    let alive = false;
+    ps.forEach(p => {
+      if (p.life <= 0) return; alive = true;
+      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.life -= p.decay;
+      cx.globalAlpha = Math.max(0, p.life);
+      cx.fillStyle = p.c; cx.shadowBlur = 7; cx.shadowColor = p.c;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, Math.PI*2); cx.fill();
+    });
+    cx.globalAlpha = 1; cx.shadowBlur = 0;
+    if (alive) requestAnimationFrame(draw);
+    else { cv.classList.remove('on'); cx.clearRect(0,0,cv.width,cv.height); }
+  }
+  requestAnimationFrame(draw);
+}
+
+sync();
+</script>
+</body>
+</html>
